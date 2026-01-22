@@ -1,0 +1,94 @@
+/* =====================
+   RESET GENERAL
+===================== */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Poppins, sans-serif;
+}
+
+/* =====================
+   HERO BIENVENIDA
+===================== */
+.home-hero{
+    min-height:100vh;
+    background-image:url("../imagenes/Bienvenida.jpeg");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* Capa para mejorar contraste */
+.overlay{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        135deg,
+        rgba(255, 79, 155, 0),
+        rgba(127, 92, 255, 0),
+        rgba(0, 0, 0, 0)
+    );
+}
+
+/* Contenido */
+.home-content{
+    position:relative;
+    text-align:center;
+    color:#fff;
+    animation:fadeUp 1.2s ease;
+}
+
+.home-content h1{
+    font-size:4rem;
+    letter-spacing:3px;
+    margin-bottom:10px;
+}
+
+.home-content p{
+    font-size:1.2rem;
+    opacity:0.95;
+    margin-bottom:45px;
+}
+
+/* Menú bienvenida */
+.home-menu{
+    display:flex;
+    gap:25px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.home-menu a{
+    padding:18px 42px;
+    border-radius:50px;
+    background:rgba(0,0,0,0.35);
+    backdrop-filter:blur(12px);
+    color:#fff;
+    text-decoration:none;
+    font-weight:600;
+    transition:0.4s ease;
+    border:1px solid rgba(255,255,255,0.15);
+}
+
+.home-menu a:hover{
+    transform:translateY(-8px) scale(1.05);
+    background:#fc0f0f;
+    box-shadow:0 15px 40px rgba(255,79,154,0.4);
+}
+
+/* Animación */
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(50px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
