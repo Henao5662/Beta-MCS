@@ -1,0 +1,228 @@
+/* =====================
+   RESET
+===================== */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Poppins, sans-serif;
+}
+
+/* =====================
+   COLORES MARCA
+===================== */
+:root{
+    --bg:#0f0f14;
+    --pink:#ff4f9a;
+    --purple:#7f5cff;
+    --red:#ff3b3b;
+}
+
+/* =====================
+   BODY
+===================== */
+body{
+    background:var(--bg);
+    color:#fff;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:80px 10%;
+}
+
+/* =====================
+   MENÚ HAMBURGUESA
+===================== */
+.menu-toggle{
+    position:fixed;
+    top:25px;
+    right:25px;
+    width:32px;
+    cursor:pointer;
+    z-index:2000;
+}
+
+.menu-toggle span{
+    display:block;
+    height:3px;
+    background:var(--pink);
+    margin:7px 0;
+    transition:0.4s;
+}
+
+.menu-toggle.active span:nth-child(1){
+    transform:translateY(10px) rotate(45deg);
+}
+.menu-toggle.active span:nth-child(2){
+    opacity:0;
+}
+.menu-toggle.active span:nth-child(3){
+    transform:translateY(-10px) rotate(-45deg);
+}
+
+/* MENÚ LATERAL */
+.side-menu{
+    position:fixed;
+    top:0;
+    right:-100%;
+    width:280px;
+    height:100vh;
+    background:#111;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding-left:40px;
+    transition:0.5s;
+    z-index:1500;
+}
+
+.side-menu.active{
+    right:0;
+}
+
+.side-menu a{
+    color:#fff;
+    text-decoration:none;
+    font-size:1.4rem;
+    margin:15px 0;
+    transition:0.3s;
+}
+
+.side-menu a:hover{
+    color:var(--pink);
+}
+
+/* =====================
+   CONTENIDO 404
+===================== */
+.error-page{
+    text-align:center;
+    width:100%;
+}
+
+.error-content{
+    max-width:650px;
+    margin:auto;
+    animation:fadeUp 1s ease;
+}
+
+/* 404 GRANDE */
+.error-code{
+    font-size:8rem;
+    color:var(--pink);
+    text-shadow:0 0 35px rgba(255,79,154,0.6);
+    margin-bottom:10px;
+}
+
+/* SUBTÍTULO */
+.error-content h2{
+    font-size:2rem;
+    margin-bottom:15px;
+}
+
+/* TEXTO */
+.error-content p{
+    opacity:0.85;
+    line-height:1.6;
+    margin-bottom:40px;
+}
+
+/* BOTONES */
+.error-actions{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.btn-primary,
+.btn-secondary{
+    padding:16px 38px;
+    border-radius:50px;
+    text-decoration:none;
+    font-weight:600;
+    transition:0.3s;
+}
+
+/* BOTÓN PRINCIPAL */
+.btn-primary{
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    color:#fff;
+}
+
+.btn-primary:hover{
+    transform:translateY(-6px);
+    box-shadow:0 15px 35px rgba(255,79,154,0.4);
+}
+
+/* BOTÓN SECUNDARIO */
+.btn-secondary{
+    background:#1a1a24;
+    color:#fff;
+}
+
+.btn-secondary:hover{
+    background:var(--purple);
+}
+
+/* =====================
+   WHATSAPP
+===================== */
+.whatsapp-fixed{
+    position:fixed;
+    bottom:25px;
+    right:25px;
+    background:#25d366;
+    padding:14px 28px;
+    border-radius:50px;
+    color:#fff;
+    text-decoration:none;
+    font-weight:600;
+    z-index:2000;
+}
+
+/* =====================
+   ANIMACIÓN
+===================== */
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* =====================
+   RESPONSIVE
+===================== */
+@media(max-width:600px){
+
+    .error-code{
+        font-size:5rem;
+    }
+
+    .error-content h2{
+        font-size:1.6rem;
+    }
+
+    .error-content p{
+        font-size:0.95rem;
+    }
+
+    .btn-primary,
+    .btn-secondary{
+        width:100%;
+        text-align:center;
+    }
+
+    .whatsapp-fixed{
+        bottom:18px;
+        right:18px;
+        padding:12px 22px;
+        font-size:0.9rem;
+    }
+}

@@ -284,7 +284,7 @@ body{
 }
 
 .video-thumb video{
- pointerpointer-events:none;
+    pointer-events: none;
 }
 
 .play-icon{
@@ -428,6 +428,7 @@ body{
 
 
 /* ===== CELULARES ===== */
+@media (max-width: 480px) {
 
     body{
         padding: 90px 5%;
@@ -489,5 +490,34 @@ body{
         font-size: 0.85rem;
     }
 
-    .plan-card ul li
-        font-size: 0
+    .plan-card ul li{
+        font-size: 0.9rem;
+    }
+
+    /* AJUSTES ADICIONALES PARA MÓVILES */
+    .portfolio-grid{
+        gap: 18px;
+    }
+
+    .portfolio-item img,
+    .portfolio-item video{
+        height: 220px;
+    }
+
+    .modal-content.portfolio-modal{
+        width: 95%;
+        max-height: 85vh;
+        padding: 12px;
+    }
+
+    .portfolio-modal img,
+    .portfolio-modal video{
+        max-height: 65vh;
+    }
+
+    .whatsapp-fixed{
+        padding: 12px 18px;
+        bottom:18px;
+        right:18px;
+    }
+}
