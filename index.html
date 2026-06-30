@@ -1,27 +1,394 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Team MCS | Diseño & IA</title>
-<link rel="stylesheet" href="css/home.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulgaro - Control de Aseo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #f3f4f6;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .text-vulgaro { color: #FFD700; }
+        .bg-vulgaro { background-color: #FFD700; color: #111; }
+        .border-vulgaro { border-color: #FFD700; }
+        
+        input[type="checkbox"] {
+            accent-color: #FFD700;
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .mes-finalizado {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(100%);
+        }
+        .mes-finalizado label {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+
+        #notificacion-drive {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #22c55e;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+            transition: bottom 0.5s ease-in-out;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 90%;
+            max-width: 400px;
+            justify-content: center;
+            text-align: center;
+        }
+        #notificacion-drive.mostrar {
+            bottom: 30px;
+        }
+    </style>
 </head>
-<body>
+<body class="min-h-screen p-4 md:p-8 bg-gradient-to-b from-black to-neutral-900 relative">
 
-<section class="home-hero">
-    <div class="overlay"></div>
-
-    <div class="home-content">
-        <h1>TEAM MCS</h1>
-        <p>Diseño gráfico y creatividad impulsada por Inteligencia Artificial</p>
-
-        <div class="home-menu">
-            <a href="404.html">Servicios</a>
-            <a href="404.html">Planes</a>
-            <a href="portafolio.html">Portafolio</a>
-            <a href="404.html">Contacto</a>
-        </div>
+    <!-- Toast de Notificación -->
+    <div id="notificacion-drive">
+        <span class="text-xl">✅</span> <span>Semana completada y bloqueada. Reporte enviado a Drive.</span>
     </div>
-</section>
 
+    <div class="max-w-5xl mx-auto">
+        <!-- Encabezado -->
+        <header class="text-center mb-10 border-b border-yellow-500/30 pb-6">
+            <h1 class="text-5xl font-black uppercase tracking-widest text-vulgaro mb-2 drop-shadow-[0_0_15px_rgba(255,215,0,0.3)]">Vulgaro</h1>
+            <p class="text-gray-400 font-light tracking-widest text-sm">SISTEMA DE CONTROL DE ASEO 2026</p>
+        </header>
+
+        <!-- Panel de Control y Cronómetro -->
+        <section class="bg-neutral-950 border border-yellow-500/20 rounded-2xl p-8 mb-10 text-center shadow-2xl shadow-yellow-900/10">
+            <h2 class="text-2xl font-semibold mb-2 text-gray-200">Cronómetro de Turno</h2>
+            <p id="texto-alerta" class="text-sm text-gray-500 mb-6">Toca el botón para empezar a contar el tiempo</p>
+            
+            <div id="display-tiempo" class="text-6xl font-mono text-vulgaro mb-8 tracking-wider font-bold drop-shadow-[0_0_10px_rgba(255,215,0,0.2)]">00:00:00</div>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a id="btn-iniciar" 
+                   href="https://api.whatsapp.com/send?phone=573044915068&text=Hola%20Andrea%20empiezo%20turno" 
+                   target="_blank" 
+                   onclick="iniciarCronometro()"
+                   class="bg-vulgaro hover:bg-yellow-400 font-bold py-4 px-8 rounded-xl transition-all shadow-lg text-lg flex items-center justify-center gap-2 uppercase tracking-wide">
+                   ▶ Empezar Turno
+                </a>
+                
+                <a id="btn-finalizar" 
+                   href="#" 
+                   onclick="finalizarTurnoSilencioso(event)"
+                   class="bg-red-600 hover:bg-red-500 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg text-lg flex items-center justify-center gap-2 uppercase tracking-wide hidden">
+                   ⏹ Finalizar y Enviar Reporte
+                </a>
+            </div>
+        </section>
+
+        <!-- TAREAS DIARIAS FIJAS -->
+        <section id="seccion-diarios" class="bg-neutral-900/80 rounded-2xl p-8 mb-12 border-t-4 border-vulgaro shadow-lg">
+            <div class="flex justify-between items-center mb-6 border-b border-neutral-700 pb-4">
+                <h2 class="text-2xl font-bold text-vulgaro uppercase tracking-wide flex items-center gap-3">
+                    <span class="text-3xl">⏱️</span> Tareas Diarias (Fijas)
+                </h2>
+                <span class="bg-yellow-900/30 text-vulgaro px-4 py-1 rounded-full text-xs font-bold uppercase border border-yellow-700/50">Obligatorio todos los días</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-gray-200">
+                <label class="flex items-center gap-3 cursor-pointer p-3 hover:bg-neutral-800/80 rounded-xl transition-colors border border-transparent hover:border-neutral-700"><input type="checkbox"> Barrer y trapear el local</label>
+                <label class="flex items-center gap-3 cursor-pointer p-3 hover:bg-neutral-800/80 rounded-xl transition-colors border border-transparent hover:border-neutral-700"><input type="checkbox"> Limpiar mesas</label>
+                <label class="flex items-center gap-3 cursor-pointer p-3 hover:bg-neutral-800/80 rounded-xl transition-colors border border-transparent hover:border-neutral-700"><input type="checkbox"> Limpiar barra</label>
+                <label class="flex items-center gap-3 cursor-pointer p-3 hover:bg-neutral-800/80 rounded-xl transition-colors border border-transparent hover:border-neutral-700"><input type="checkbox"> Limpieza de baño</label>
+                <label class="flex items-center gap-3 cursor-pointer p-3 hover:bg-neutral-800/80 rounded-xl transition-colors border border-transparent hover:border-neutral-700"><input type="checkbox"> Limpieza de televisores</label>
+                <label class="flex items-center gap-3 cursor-pointer p-3 hover:bg-neutral-800/80 rounded-xl transition-colors border border-transparent hover:border-neutral-700"><input type="checkbox"> Limpieza superficial trampa y carro</label>
+                <label class="flex items-center gap-3 cursor-pointer p-3 hover:bg-neutral-800/80 rounded-xl transition-colors border border-transparent hover:border-neutral-700"><input type="checkbox"> Dejar lo más limpia posible la trampa</label>
+                <label class="flex items-center gap-3 cursor-pointer p-3 hover:bg-neutral-800/80 rounded-xl transition-colors border border-transparent hover:border-neutral-700"><input type="checkbox"> Mantener limpia campana de la cocina</label>
+            </div>
+        </section>
+
+        <!-- Contenedor del Calendario Anual -->
+        <div id="calendario-anual" class="space-y-10">
+            <!-- Se llena automáticamente con JavaScript -->
+        </div>
+
+    </div>
+
+    <script>
+        // --- CONFIGURACIÓN DE APIS Y URLS ---
+        const numWhatsApp = "573046450851"; 
+        const urlGoogleDrive = "https://script.google.com/macros/s/AKfycbzlDKBCTh724w-yh4PQekrvHyB41WWtUGph7jIIW3OE3697ZYnSeGAx9Ef8l5QLuveSBQ/exec"; 
+
+        // --- LÓGICA DEL CRONÓMETRO (CON MEMORIA PERSISTENTE) ---
+        let timerInterval;
+        let tiempoInicio = 0;
+        let textoTiempoFinal = "0 segundos";
+        const enlaceFinalizar = document.getElementById('btn-finalizar');
+
+        window.onload = function() {
+            if (localStorage.getItem('turnoVulgaroCorriendo') === 'true') {
+                tiempoInicio = parseInt(localStorage.getItem('tiempoInicioVulgaro'));
+                document.getElementById('btn-iniciar').classList.add('hidden');
+                enlaceFinalizar.classList.remove('hidden');
+                document.getElementById('texto-alerta').innerHTML = "⚠️ <span class='text-red-400 font-bold'>¡NO OLVIDES!</span> Toma captura de las casillas marcadas y fotos del aseo para enviarlas por WhatsApp.";
+                iniciarIntervalo();
+            }
+        };
+
+        function actualizarDisplay() {
+            if (tiempoInicio === 0) return;
+
+            let tiempoActual = Date.now();
+            let segundosTotales = Math.floor((tiempoActual - tiempoInicio) / 1000);
+
+            const h = Math.floor(segundosTotales / 3600);
+            const m = Math.floor((segundosTotales % 3600) / 60);
+            const s = segundosTotales % 60;
+            
+            document.getElementById('display-tiempo').innerText = 
+                `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            
+            if (h > 0) {
+                textoTiempoFinal = `${h} horas y ${m} minutos`;
+            } else if (m > 0) {
+                textoTiempoFinal = `${m} minutos y ${s} segundos`;
+            } else {
+                textoTiempoFinal = `${s} segundos`;
+            }
+        }
+
+        function iniciarCronometro() {
+            document.getElementById('btn-iniciar').classList.add('hidden');
+            enlaceFinalizar.classList.remove('hidden');
+            document.getElementById('texto-alerta').innerHTML = "⚠️ <span class='text-red-400 font-bold'>¡NO OLVIDES!</span> Toma captura de las casillas marcadas y fotos del aseo para enviarlas por WhatsApp.";
+            
+            tiempoInicio = Date.now();
+            localStorage.setItem('turnoVulgaroCorriendo', 'true');
+            localStorage.setItem('tiempoInicioVulgaro', tiempoInicio.toString());
+            
+            iniciarIntervalo();
+        }
+
+        function iniciarIntervalo() {
+            actualizarDisplay(); 
+            timerInterval = setInterval(actualizarDisplay, 1000);
+        }
+
+        function mandarDatosADrive(tipoReporte) {
+            let todasLasTareas = [];
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                let nombreTarea = cb.parentElement.innerText.trim();
+                todasLasTareas.push({
+                    nombre: nombreTarea,
+                    completada: cb.checked
+                });
+            });
+
+            fetch(urlGoogleDrive, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tiempo: tipoReporte,
+                    tareas: todasLasTareas
+                })
+            }).catch(err => console.log("Error al subir a Drive: ", err));
+        }
+
+        function finalizarTurnoSilencioso(event) {
+            event.preventDefault(); 
+
+            // --- VALIDACIÓN SOLO DE TAREAS DIARIAS ---
+            let tareasDiarias = document.querySelectorAll('#seccion-diarios input[type="checkbox"]');
+            let todasDiariasCompletas = Array.from(tareasDiarias).every(cb => cb.checked);
+
+            if (!todasDiariasCompletas) {
+                alert("❌ ACCIÓN DENEGADA:\n\nPara poder finalizar el turno es OBLIGATORIO marcar todas las Tareas Diarias (Fijas).\n\nPor favor, complétalas e inténtalo de nuevo.");
+                return; 
+            }
+            // ------------------------------------------
+
+            clearInterval(timerInterval);
+            
+            localStorage.removeItem('turnoVulgaroCorriendo');
+            localStorage.removeItem('tiempoInicioVulgaro');
+            tiempoInicio = 0;
+
+            // Mandar a Drive el tiempo
+            mandarDatosADrive(textoTiempoFinal);
+
+            // Redirigir a WhatsApp
+            let mensajeCodificado = encodeURIComponent(`Hola Andrea finalicé turno. Tiempo invertido en el aseo: ${textoTiempoFinal}. Envío adjuntas las capturas y pruebas.`);
+            window.open(`https://api.whatsapp.com/send?phone=${numWhatsApp}&text=${mensajeCodificado}`, '_blank');
+
+            // Limpiar la pantalla de las tareas diarias para mañana
+            setTimeout(() => {
+                document.querySelectorAll('#seccion-diarios input[type="checkbox"]').forEach(cb => cb.checked = false);
+                enlaceFinalizar.classList.add('hidden');
+                document.getElementById('btn-iniciar').classList.remove('hidden');
+                document.getElementById('btn-iniciar').innerHTML = "▶ Iniciar Nuevo Turno";
+                document.getElementById('texto-alerta').innerHTML = "Toca el botón para empezar a contar el tiempo";
+                document.getElementById('display-tiempo').innerText = "00:00:00";
+            }, 1500);
+        }
+
+        // --- SISTEMA DE AUTO-GUARDADO Y BLOQUEO SEMANAL ---
+        document.getElementById('calendario-anual').addEventListener('change', function(e) {
+            if(e.target.type === 'checkbox') {
+                let contenedorSemana = e.target.closest('.contenedor-semana');
+                if (contenedorSemana) {
+                    let checkboxes = contenedorSemana.querySelectorAll('input[type="checkbox"]');
+                    let todosCompletados = Array.from(checkboxes).every(cb => cb.checked);
+                    
+                    if (todosCompletados && contenedorSemana.dataset.enviado !== "true") {
+                        contenedorSemana.dataset.enviado = "true";
+                        
+                        contenedorSemana.classList.add('opacity-50', 'grayscale');
+                        contenedorSemana.querySelector('.badge-terminada').classList.remove('hidden');
+                        checkboxes.forEach(cb => cb.disabled = true);
+
+                        let semanasGuardadas = JSON.parse(localStorage.getItem('semanasCompletadasVulgaro') || '[]');
+                        if(!semanasGuardadas.includes(contenedorSemana.id)) {
+                            semanasGuardadas.push(contenedorSemana.id);
+                            localStorage.setItem('semanasCompletadasVulgaro', JSON.stringify(semanasGuardadas));
+                        }
+                        
+                        let notificacion = document.getElementById('notificacion-drive');
+                        notificacion.classList.add('mostrar');
+                        setTimeout(() => notificacion.classList.remove('mostrar'), 4000);
+
+                        mandarDatosADrive("Reporte Automático Semanal (Lleno al 100%)");
+
+                    } else if (!todosCompletados) {
+                        contenedorSemana.dataset.enviado = "false";
+                    }
+                }
+            }
+        });
+
+        // --- GENERADOR ESTÉTICO POR MESES ---
+        const plantillas = [
+            ["Limpiar mesas, barra, sillas, zona del bar y lavar baño", "Lavar sillas amarillas", "Limpiar neveras a profundidad"],
+            ["Limpiar mesas, barra, sillas, zona del bar y lavar baño", "Limpiar a profundidad extractor", "Lavar carro y sus alrededores a profundidad"],
+            ["Limpiar mesas, barra, sillas, zona del bar y lavar baño", "Limpiar ventanas (sala, salon 1 y salon 2)", "Limpiar a profundidad paredes y lugares de almacenamiento"],
+            ["Limpiar mesas, barra, sillas, zona del bar y lavar baño", "Lavado a profundidad de carro", "Lavado a profundidad de trampa de grasa"],
+            ["Limpiar mesas, barra, sillas, zona del bar y lavar baño", "Limpieza superficial neveras", "Limpieza superficial carro", "Limpieza a profundidad extractor", "Limpieza escaleras"]
+        ];
+
+        const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        
+        let fechaActual = new Date(2026, 6, 1); 
+        const finDeAno = new Date(2026, 11, 31);
+        const fechaDeHoy = new Date(); 
+        
+        let indicePlantilla = 0;
+        let semanasPorMes = {};
+
+        let semanasCompletadasMemoria = JSON.parse(localStorage.getItem('semanasCompletadasVulgaro') || '[]');
+
+        while(fechaActual <= finDeAno) {
+            let fechaJueves = new Date(fechaActual);
+            let diff = 4 - fechaJueves.getDay();
+            if (diff < 0) diff += 7;
+            fechaJueves.setDate(fechaJueves.getDate() + diff);
+
+            if(fechaJueves > finDeAno) break;
+
+            let fechaLunes = new Date(fechaJueves);
+            fechaLunes.setDate(fechaJueves.getDate() - 3);
+
+            let mes = fechaJueves.getMonth();
+            if(!semanasPorMes[mes]) semanasPorMes[mes] = [];
+
+            semanasPorMes[mes].push({
+                lunes: fechaLunes.getDate(),
+                jueves: fechaJueves.getDate(),
+                tareas: plantillas[indicePlantilla]
+            });
+
+            fechaActual.setDate(fechaJueves.getDate() + 7);
+            indicePlantilla = (indicePlantilla + 1) % 5;
+        }
+
+        const contenedor = document.getElementById('calendario-anual');
+        const mesActualReal = fechaDeHoy.getMonth(); 
+        const anoActualReal = fechaDeHoy.getFullYear();
+
+        for (const [mesIndex, semanas] of Object.entries(semanasPorMes)) {
+            const esMesPasado = (anoActualReal >= 2026 && mesActualReal > parseInt(mesIndex));
+            const disabledMesAttr = esMesPasado ? 'disabled' : '';
+            
+            let htmlMes = `
+                <div class="bg-neutral-900 rounded-2xl border border-neutral-800 overflow-hidden shadow-xl ${esMesPasado ? 'mes-finalizado' : ''}">
+                    <div class="bg-neutral-950 px-6 py-4 border-b border-neutral-800 flex justify-between items-center">
+                        <h3 class="text-3xl font-black text-white uppercase tracking-wider">${nombresMeses[mesIndex]}</h3>
+                        ${esMesPasado ? '<span class="bg-red-900/50 text-red-400 px-4 py-1 rounded-full text-xs font-bold uppercase border border-red-800">Mes Finalizado</span>' : '<span class="bg-yellow-900/30 text-vulgaro px-4 py-1 rounded-full text-xs font-bold uppercase border border-yellow-700/50">Mes Activo</span>'}
+                    </div>
+                    <div class="p-6">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 border-b border-neutral-800 pb-8">
+                            <div class="bg-neutral-950/50 p-5 rounded-xl border border-neutral-800">
+                                <h4 class="text-vulgaro font-bold mb-4 border-b border-yellow-900/30 pb-2 uppercase tracking-wide text-sm flex items-center gap-2">🗓️ Tareas Quincenales</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-start gap-3 cursor-pointer text-sm hover:text-white transition-colors"><input type="checkbox" ${disabledMesAttr}> Tarea quincenal (Espacio disponible para asignar)</label>
+                                </div>
+                            </div>
+
+                            <div class="bg-neutral-950/50 p-5 rounded-xl border border-neutral-800">
+                                <h4 class="text-vulgaro font-bold mb-4 border-b border-yellow-900/30 pb-2 uppercase tracking-wide text-sm flex items-center gap-2">📅 Tareas Mensuales</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-start gap-3 cursor-pointer text-sm hover:text-white transition-colors"><input type="checkbox" ${disabledMesAttr}> Limpiar techo (Pedir ayuda)</label>
+                                    <label class="flex items-start gap-3 cursor-pointer text-sm hover:text-white transition-colors"><input type="checkbox" ${disabledMesAttr}> Pedir ayuda a Juanfe para limpiar arriba de las neveras</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 class="text-xl font-bold text-white mb-6 uppercase tracking-wide">Rutinas Semanales</h4>
+                        <div class="space-y-6">
+            `;
+
+            semanas.forEach((semana, idx) => {
+                let idSemana = `semana-${mesIndex}-${idx}`;
+                let semanaTerminada = semanasCompletadasMemoria.includes(idSemana);
+                
+                let bloqueadaClass = semanaTerminada ? 'opacity-50 grayscale' : '';
+                let badgeHidden = semanaTerminada ? '' : 'hidden';
+                let cbDisabled = (esMesPasado || semanaTerminada) ? 'disabled' : '';
+
+                let htmlTareas = semana.tareas.map(t => 
+                    `<label class="flex items-center gap-3 p-2 hover:bg-neutral-800/50 rounded-lg transition-colors cursor-pointer"><input type="checkbox" ${cbDisabled} ${semanaTerminada ? 'checked' : ''}> ${t}</label>`
+                ).join('');
+
+                htmlMes += `
+                    <div id="${idSemana}" class="border-l-2 border-vulgaro pl-4 contenedor-semana relative transition-all duration-500 ${bloqueadaClass}" data-enviado="${semanaTerminada ? 'true' : 'false'}">
+                        
+                        <div class="flex justify-between items-center mb-3 pr-2">
+                            <h5 class="text-vulgaro font-semibold text-sm">Semana del Lunes ${semana.lunes} al Jueves ${semana.jueves}</h5>
+                            <span class="badge-terminada ${badgeHidden} bg-green-600 text-white text-xs px-3 py-1 rounded-full font-bold shadow-lg">✅ Terminada</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-300">
+                            ${htmlTareas}
+                        </div>
+                    </div>
+                `;
+            });
+
+            htmlMes += `</div></div></div>`;
+            contenedor.innerHTML += htmlMes;
+        }
+    </script>
 </body>
 </html>
